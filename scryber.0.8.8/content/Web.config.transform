@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+
+  <!-- There is one defined section group called Scryber, and then multiple sections with their own factory.
+       This limits the dependencies on assembly referencing whilst keeping everything together -->
+  <configSections>
+    <sectionGroup name="scryber">
+      <section name="tracing" type="Scryber.Configuration.TracingConfigurationSection, Scryber.Configuration, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe"/>
+      <section name="fonts" type="Scryber.Configuration.FontsConfigurationSection, Scryber.Configuration, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe"/>
+      <section name="imaging" type="Scryber.Configuration.ImagingConfigurationSection, Scryber.Drawing, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe"/>
+      <section name="generation" type="Scryber.Configuration.GenerationConfigurationSection, Scryber.Configuration, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe"/>
+      <section name="rendering" type="Scryber.Configuration.RenderOptionsConfigurationSection, Scryber.Configuration, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe"/>
+    </sectionGroup>
+  </configSections>
+
+
+  <scryber>
+
+    <!-- tracing section defines the level and location of the trace logs -->
+    <!-- @trace-level specifies the amount of actual logging that will be recorded. All | Messages (default) | Warnings | Errrors | Off 
+         Specifying All for the log level will seriously affect your pdf generation performance and should only be used for debugging -->
+    <!-- Inner elements define where messages will be written. There are a number of pre-defined logs and multiple can be used if required.
+         But you can always define and register your own. Use the <remove name="" /> and <clear/> to remove pre-defined loggers -->
+    <tracing trace-level="Messages">
+      <clear/>
+      <log name="WebTraceLog" factory-type="Scryber.Logging.PDFWebTraceLogFactory, Scryber.Common, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe" />
+      <!-- Creating your own is easy, simply define a class with a paramerterless constructor and implement the IPDFTraceLogFactory interface-->
+      <!--<log name="MyLogName" factory-type="[qualified type name]" />-->
+    </tracing>
+
+    <!-- fonts section allows more than the 16 standard fonts to be included in PDF files and explict mappings to font files.
+         Currently scryber only supports open-type (ttf) fonts. -->
+    <!-- If you specify @use-system-fonts="true" then the true type fonts installed on the machine will be made available.
+         If you specify @font-substitution="true" then any fonts that are not specified in a document, but not found on a machine 
+         will be substrituted with the default font (Courier). Default is false and exceptions will be raised. -->
+    <!-- If you specify @default-directory="[path]" then all the fonts in this directory can be used in the pdf documents. Without requiring access to the System/Fonts directory -->
+    <!-- With inner elements you can declare specific fonts to be named and associated with open type font files or resources using the add element. remove and clear can also be used for
+         collection modification. Using resources allows the packaging of fonts with applications rather than requiring them to be installed and
+         accessible to all applications, or sitting in the file system. -->
+    <fonts use-system-fonts="true" font-substitution="false" >
+      <!--<clear/>
+      <add family-name="Bauhaus 93" font-style="Bold" font-file="[path to file]" />
+       or @rsrc-name='[resource name]' and @rsrc-base='[manager assembly name]' -->
+    </fonts>
+
+    <!-- scryber supports lots of imaging formats (in fact it uses the Bitmap object to extract pixel data)
+         but this only supports physical files in a standard format. With browsers we can define image loading 
+         capabilities on the server and push the data back. As pdf files include all the imaging data this can be more difficult.
+         It is therefore possible to define a specific image factory with an extension / regular expression 
+    <imaging allow-missing-images='true' >
+      <add match-path="[regular expression]" factory-type="[qualified type name]" />
+
+    </imaging>-->
+
+    <!-- The @missing-reference-action allows custom handling of exceptions when parsing files. Options are RaiseException (the default), LogError, or DoNothing.
+         The inner content of the generation section allow custom extensions to be included so the parser can identify a component in the 
+         xml file based on it's local name and namespace. -->
+    <generation missing-reference-action="RaiseException">
+      <!-- <clear/>
+      <register xml-namespace="http://schemas.other.scryber.co.uk" runtime-namespace="[Other.Namespace]" runtime-assembly="[Other Assembly Name]" />-->
+    </generation>
+
+    <!-- rendering section provides the default values for the rendering output. 
+         Only the component-name-output (All|ExplicitOnly) and compression type (None|FlateDecode) should be modifed at the moment
+     -->
+    <rendering compression-type="FlateDecode" pdf-version="1.5" output-compliance="None" component-name-output="ExplicitOnly" />
+
+  </scryber>
+
+
+  <!-- If using a web application then by default these types of file 
+       can be served to the client. This could present a security risk.
+       Add the HttpForbiddenHandler for each type and this will be blocked
+       
+       We can also serve PDF files directly from the request using the built in handler
+       Uncomment the httpHandlers if you are not using integrated pipline mode -->
+  <!-- 
+  <system.web>
+    <httpHandlers>
+      <add path="*.psfx" verb="*" type="System.Web.HttpForbiddenHandler" />
+      <add path="*.ppfx" verb="*" type="System.Web.HttpForbiddenHandler" />
+      <add path="*.pcfx" verb="*" type="System.Web.HttpForbiddenHandler" />
+      <add path="*.pdfx" verb="*" type="Scryber.Web.ScryberPDFHandlerFactory, Scryber.Components, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe" />
+    </httpHandlers>
+  </system.web> -->
+
+  <system.webServer>
+    <handlers>
+      <add name="Scryber.Styles" path="*.psfx" verb="*" type="System.Web.HttpForbiddenHandler" />
+      <add name="Scryber.Components.Page" path="*.ppfx" verb="*" type="System.Web.HttpForbiddenHandler" />
+      <add name="Scryber.Components.UserComponent" path="*.pcfx" verb="*" type="System.Web.HttpForbiddenHandler" />
+      <add name="Scryber.Components.Document" path="*.pdfx" verb="*" 
+           type="Scryber.Web.ScryberPDFHandlerFactory, Scryber.Components, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe"/>
+    </handlers>
+  </system.webServer>
+  
+</configuration>

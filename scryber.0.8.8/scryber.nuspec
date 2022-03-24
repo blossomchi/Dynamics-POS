@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>scryber</id>
+    <version>0.8.8.0</version>
+    <title>Scryber PDF Generator</title>
+    <authors>PerceiveIT Limited</authors>
+    <owners>PerceiveIT Limited</owners>
+    <licenseUrl>http://opensource.org/licenses/LGPL-3.0</licenseUrl>
+    <projectUrl>https://nuget.org/packages/Scryber</projectUrl>
+    <iconUrl>http://www.scryber.co.uk/images/scryber_logoonly_32.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Scryber is an advanced PDF generation tool that allows complete definition of a dynamic PDF document based on XML (and code)
+      including cascading styles, databinding and component separation in referenced files.
+      This framework is built entirely in .NET and is released under the LGPL licence so you can link to it in commercial applications.
+      More information can be found at http://www.scryber.co.uk</description>
+    <summary>Quickly build and generate good looking dynamic PDF documents using XML, Cascading styles, and DataBinding. Content flows in pages and can be defined using familiar Divs, Labels, Tables, etc.</summary>
+    <releaseNotes>The 0.8.8.0 release is stable but in beta.
+      
+      Some significant fixes and updates including layout and text fixes.
+      
+      Document sizes should be smaller (significantly smaller for complex or long documents).
+      
+      Headings - H1..6 are now fully qualified block components. 
+      They support backgrounds, padding, margins and borders, and also still have the text attribute, although they can now have any content.
+      This may affect existing layouts - check before release.
+      
+      Table Row Heading can repeat across regions and pages (style based but default on pdf:Heading-Row)
+      
+      The 0.8.7 release is stable but in beta.
+      Includes new List (Ol, Ul) top level components for creating lists - fully styled and bindable
+      Also fixes for multiple namespace xml data sources</releaseNotes>
+    <copyright>Copyright PerceiveIT Limited 2014</copyright>
+    <language>en-GB</language>
+    <tags>PDF, XML, Databinding, Styles</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Web" targetFramework=".NETFramework4.0" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="Scryber.Data, Scryber.Components, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe"
+    elementFormDefault="qualified"
+    xmlns="Scryber.Data, Scryber.Components, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe"
+    xmlns:mstns="Scryber.Data, Scryber.Components, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:pdf="Scryber.Components, Scryber.Components, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe"
+>
+
+  <xs:import namespace="Scryber.Components, Scryber.Components, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe" 
+             schemaLocation="Scryber.Types.v08.xsd" />
+  <xs:import namespace="Scryber.Components, Scryber.Components, Version=0.8.0.0, Culture=neutral, PublicKeyToken=872cbeb81db952fe" schemaLocation="Scryber.Components.v08.xsd" />
+  
+  <xs:element name="ForEach" type="Binding-ForEachType" substitutionGroup="pdf:ScryberDataSourceBase"  />
+
+  <xs:element name="If" type="Binding-IfType" substitutionGroup="pdf:ScryberDataSourceBase" />
+
+  <xs:element name="Choose" type="Binding-ChooseType" substitutionGroup="pdf:ScryberDataSourceBase" />
+
+  <xs:element name="XMLDataSource" type="Binding-XMLDataSourceType" substitutionGroup="pdf:ScryberDataSourceBase" />
+
+  <!-- 
+    For-Each
+  -->
+
+  <xs:complexType name="Binding-ForEachType">
+    <xs:complexContent >
+      <xs:extension base="pdf:ScryberDataSourceBaseType" >
+        <xs:sequence>
+          <xs:element name="Template" form="unqualified" minOccurs="0" maxOccurs="1" type="pdf:AnyDocumentContentType" ></xs:element>
+        </xs:sequence>
+        <xs:attribute name="select" type="pdf:BindableXPathType" use="required" />
+        <xs:attribute name="datasource-id" type="xs:string" use="optional" />
+        <xs:attributeGroup ref="DataElementAttributes" />
+        <xs:attributeGroup ref="DataRangeAttributes" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- 
+   If
+  -->
+
+  <xs:complexType name="Binding-IfType">
+    <xs:complexContent>
+      <xs:extension base="pdf:ScryberDataSourceBaseType" >
+        <xs:sequence>
+          <xs:element name="Template" form="unqualified" minOccurs="0" maxOccurs="1" type="pdf:AnyDocumentContentType" ></xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="DataElementAttributes" />
+        <xs:attribute name="test" type="pdf:BindableXPathType" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  
+  <!-- 
+    Choose
+  -->
+  <xs:complexType name="Binding-ChooseType">
+    <xs:complexContent>
+      <xs:extension base="pdf:ScryberDataSourceBaseType" >
+        <xs:sequence minOccurs="1">
+          <xs:sequence minOccurs="1" maxOccurs="unbounded" >
+            <xs:element name="When"  minOccurs="1" maxOccurs="unbounded" >
+              <xs:complexType >
+                <xs:sequence>
+                  <xs:element name="Template" form="unqualified" minOccurs="0" maxOccurs="1" type="pdf:AnyDocumentContentType" ></xs:element>
+                </xs:sequence>
+                <xs:attribute name="test" type="pdf:BindableXPathType" use="required" />
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:element name="Otherwise" minOccurs="0" maxOccurs="1" >
+            <xs:complexType >
+              <xs:sequence>
+                <xs:element name="Template" form="unqualified" minOccurs="0" maxOccurs="1" type="pdf:AnyPageContentType" ></xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="DataElementAttributes" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 
+    XMLDataSource
+  -->
+
+  <xs:complexType name="Binding-XMLDataSourceType" >
+    <xs:complexContent>
+      <xs:extension base="pdf:ScryberDataSourceBaseType" >
+        <xs:sequence minOccurs="0" maxOccurs="1" >
+          <xs:element name="Transform" minOccurs="0" maxOccurs="1" type="Binding-XSLTransform" form="unqualified" />
+          <xs:element name="Namespaces" minOccurs="0" maxOccurs="1" type="Binding-XMLNamespaces" form="unqualified" />
+        </xs:sequence>
+        <xs:attributeGroup ref="DataElementAttributes" />
+        <xs:attribute name="source-path" type="xs:string" use="required" />
+        <xs:attribute name="cache-duration" type="xs:integer" use="optional" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Binding-XSLTransform" >
+    <xs:sequence minOccurs="0" maxOccurs="unbounded" >
+      <xs:choice minOccurs="0" maxOccurs="unbounded" >
+        <xs:element name="XsltQSArgument" type="XsltQSArgumentType" form="qualified" />
+        <xs:element name="XsltArgument" type="XsltArgumentType" form="qualified" />
+        <xs:element name="XsltItemArgument" type="XsltItemArgumentType" form="qualified" />
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="path" type="pdf:BindableStringType" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="XsltArgumentType" >
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="value" type="xs:string" use="optional" />
+    <xs:attribute name="namespace" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="XsltQSArgumentType" >
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="default-value" type="xs:string" use="optional" />
+    <xs:attribute name="namespace" type="xs:string" use="optional" />
+    <xs:attribute name="param-name" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="XsltItemArgumentType" >
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="default-value" type="xs:string" use="optional" />
+    <xs:attribute name="namespace" type="xs:string" use="optional" />
+    <xs:attribute name="item-name" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="Binding-XMLNamespaces" >
+    <xs:sequence maxOccurs="unbounded" minOccurs="0" >
+      <xs:element name="Xmlns" type="XMLPrefix2Namespace" form="qualified" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="XMLPrefix2Namespace" >
+    <xs:attribute name="prefix" type="xs:string" use="required" />
+    <xs:attribute name="namespace" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="DataElementAttributes" >
+    <xs:attribute name="id" use="optional" type="xs:ID" />
+    <xs:attributeGroup ref="pdf:ElementEventAttributes" />
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="DataRangeAttributes" >
+    <xs:attribute name="start-index" use="optional" type="pdf:BindableIntgerType" />
+    <xs:attribute name="count" use="optional" type="pdf:BindableIntgerType" />
+    <xs:attribute name="step" use="optional" type="pdf:BindableIntgerType" />
+  </xs:attributeGroup>
+
+</xs:schema>
+
